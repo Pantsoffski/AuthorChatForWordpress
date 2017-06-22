@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         String result;
         //Perform the doInBackground method, passing in our url
         try {
-            result = getRequest.execute("https://api.github.com/").get();
+            result = getRequest.execute("https://ordin.pl/wp-json/author-chat/v2/chat/").get();
             if (result == null) {
                 result = "";
             }

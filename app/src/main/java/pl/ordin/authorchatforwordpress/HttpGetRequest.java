@@ -1,7 +1,6 @@
 package pl.ordin.authorchatforwordpress;
 
 import android.os.AsyncTask;
-import android.util.JsonReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,25 +40,9 @@ class HttpGetRequest extends AsyncTask<String, Void, String> {
             InputStreamReader streamReader = new
                     InputStreamReader(connection.getInputStream());
 
-            JsonReader jsonReader = new JsonReader(streamReader);
+            ChatCreator chatCreator = new ChatCreator();
 
-            String value;
-            jsonReader.beginObject(); // Start processing the JSON object
-            while (jsonReader.hasNext()) { // Loop through all keys
-                String key = jsonReader.nextName(); // Fetch the next key
-                if (key.equals("current_user_url")) { // Check if desired key
-                    // Fetch the value as a String
-                    value = jsonReader.nextString();
-
-                    result = value;
-
-                    break; // Break out of the loop
-                } else {
-                    jsonReader.skipValue(); // Skip values of other keys
-                }
-            }
-
-            jsonReader.close();
+            chatCreator.readJsonStream(streamReader);
 
             connection.disconnect();
 
