@@ -4,10 +4,14 @@ import android.util.JsonReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
-public class ChatCreator {
+class ChatCreator {
 
-    public void readJsonStream(InputStreamReader streamReader) throws IOException { // TODO: 22.06.2017 expects begin_object but its string 
+    ArrayList<String> readJsonStream(InputStreamReader streamReader) throws IOException {
+
+        ArrayList<String> chatToShowList = new ArrayList<>();
+
         JsonReader jsonReader = new JsonReader(streamReader);
 
         try {
@@ -17,7 +21,7 @@ public class ChatCreator {
                 if (name.equals("msg")) { // Check if desired name
                     jsonReader.beginArray();
                     while (jsonReader.hasNext()) {
-                        read(jsonReader);
+                        chatToShowList.add(jsonReader.nextString());
                     }
                     jsonReader.endArray();
                 } else {
@@ -29,22 +33,7 @@ public class ChatCreator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return chatToShowList;
     }
 
-    public void read(JsonReader reader) throws Exception {
-
-        String message;
-
-        reader.beginObject();
-        while (reader.hasNext()) {
-            String name = reader.nextName();
-            if (name.equals("0")) {
-                message = reader.nextString();
-                System.out.println(message);
-            } else {
-                reader.skipValue();
-            }
-        }
-        reader.endObject();
-    }
 }

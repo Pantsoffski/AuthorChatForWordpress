@@ -6,19 +6,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Class {@link HttpGetRequest} is responsible for url (wiki) leech.
  */
-class HttpGetRequest extends AsyncTask<String, Void, String> {
+class HttpGetRequest extends AsyncTask<String, Void, ArrayList<String>> {
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
 
     @Override
-    protected String doInBackground(String... params) {
+    protected ArrayList<String> doInBackground(String... params) {
         String stringUrl = params[0];
-        String result = "";
+        ArrayList<String> result;
 
         try {
             //Create a URL object holding our url
@@ -42,7 +43,7 @@ class HttpGetRequest extends AsyncTask<String, Void, String> {
 
             ChatCreator chatCreator = new ChatCreator();
 
-            chatCreator.readJsonStream(streamReader);
+            result = chatCreator.readJsonStream(streamReader);
 
             connection.disconnect();
 
