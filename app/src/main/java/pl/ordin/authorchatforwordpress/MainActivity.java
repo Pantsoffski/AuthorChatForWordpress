@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         //Instantiate new instance of our class
         HttpGetRequest getRequest = new HttpGetRequest();
 
-        ArrayList<String> result;
+        ArrayList<CustomArrayList> result = new ArrayList<CustomArrayList>();
         //Perform the doInBackground method, passing in our url
         try {
             result = getRequest.execute("https://ordin.pl/wp-json/author-chat/v2/chat/").get();

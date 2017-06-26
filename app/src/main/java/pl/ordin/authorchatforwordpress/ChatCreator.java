@@ -8,9 +8,13 @@ import java.util.ArrayList;
 
 class ChatCreator {
 
-    ArrayList<String> readJsonStream(InputStreamReader streamReader) throws IOException {
+    ArrayList<CustomArrayList> readJsonStream(InputStreamReader streamReader) throws IOException {
 
-        ArrayList<String> chatToShowList = new ArrayList<>();
+        ArrayList<String> nick = new ArrayList<>();
+        ArrayList<String> chat = new ArrayList<>();
+        ArrayList<String> date = new ArrayList<>();
+
+        ArrayList<CustomArrayList> chatToShowList = new ArrayList<>();
 
         JsonReader jsonReader = new JsonReader(streamReader);
 
@@ -18,18 +22,35 @@ class ChatCreator {
             jsonReader.beginObject(); // Start processing the JSON object
             while (jsonReader.hasNext()) { // Loop through all names
                 String name = jsonReader.nextName(); // Fetch the next name
-                if (name.equals("msg")) { // Check if desired name
+                if (name.equals("nick")) { // Check if desired name
                     jsonReader.beginArray();
                     while (jsonReader.hasNext()) {
-                        chatToShowList.add(jsonReader.nextString());
+                        nick.add(jsonReader.nextString());
+                    }
+                    jsonReader.endArray();
+                } else if (name.equals("msg")) {
+                    jsonReader.beginArray();
+                    while (jsonReader.hasNext()) {
+                        chat.add(jsonReader.nextString());
+                    }
+                    jsonReader.endArray();
+                } else if (name.equals("date")) {
+                    jsonReader.beginArray();
+                    while (jsonReader.hasNext()) {
+                        date.add(jsonReader.nextString());
                     }
                     jsonReader.endArray();
                 } else {
                     jsonReader.skipValue(); // Skip values of other names
                 }
             }
-
             jsonReader.endObject();
+
+            //put all values to CustomArrayList
+            for (int i = 0; i <= nick.size(); i++) {
+                chatToShowList.add(new CustomArrayList(nick.get(i), chat.get(i), date.get(i)));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
