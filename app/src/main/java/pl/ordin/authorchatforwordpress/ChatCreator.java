@@ -23,11 +23,11 @@ class ChatCreator {
             while (jsonReader.hasNext()) { // Loop through all names
                 String name = jsonReader.nextName(); // Fetch the next name
                 if (name.equals("nick")) { // Check if desired name
-                    jsonReader.beginArray();
+                    jsonReader.beginArray(); //consume the array's opening bracket
                     while (jsonReader.hasNext()) {
                         nick.add(jsonReader.nextString());
                     }
-                    jsonReader.endArray();
+                    jsonReader.endArray(); //read the array's closing bracket
                 } else if (name.equals("msg")) {
                     jsonReader.beginArray();
                     while (jsonReader.hasNext()) {

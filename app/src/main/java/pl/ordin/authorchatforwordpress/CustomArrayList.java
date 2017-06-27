@@ -3,12 +3,12 @@ package pl.ordin.authorchatforwordpress;
 /**
  * {@link CustomArrayList} this is my custom array list object.
  */
-public class CustomArrayList {
-    public String nick;
-    public String chat;
-    public String date;
+class CustomArrayList {
+    String nick;
+    String chat;
+    String date;
 
-    public CustomArrayList(String n, String c, String d) {
+    CustomArrayList(String n, String c, String d) {
         this.nick = n;
         this.chat = c;
         this.date = d;

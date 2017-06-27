@@ -1,10 +1,7 @@
 package pl.ordin.authorchatforwordpress;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +13,7 @@ import java.util.ArrayList;
 /**
  * {@link CustomAdapter} this is my custom adapter, responsible for creating custom list.
  */
-class CustomAdapter extends ArrayAdapter<CustomArrayList> { // TODO: 23.06.2017 develop adapter so it can show 3 textviews - for name, date and msg text
+class CustomAdapter extends ArrayAdapter<CustomArrayList> {
 
     CustomAdapter(@NonNull Context context, @NonNull ArrayList<CustomArrayList> objects) {
         super(context, 0, objects);
@@ -31,14 +28,15 @@ class CustomAdapter extends ArrayAdapter<CustomArrayList> { // TODO: 23.06.2017 
         }
         CustomArrayList currentString = getItem(position);
 
-        TextView defaultTextView = (TextView) listItemView.findViewById(R.id.nickDateView);
-
-        defaultTextView.setBackgroundColor(Color.parseColor("#d3b8ae")); //set day number background color
-        defaultTextView.setTypeface(Typeface.DEFAULT_BOLD); //set day number text to bold
-        defaultTextView.setGravity(Gravity.CENTER); //set day number text center
+        TextView chatView = (TextView) listItemView.findViewById(R.id.chatView);
+        TextView nickView = (TextView) listItemView.findViewById(R.id.nickView);
+        TextView dateView = (TextView) listItemView.findViewById(R.id.dateView);
 
         assert currentString != null : "currentString is null";
-        defaultTextView.setText(currentString.nick + " " + currentString.date + " " + currentString.chat);
+
+        nickView.setText(currentString.nick);
+        dateView.setText(currentString.date);
+        chatView.setText(currentString.chat);
 
         return listItemView;
     }
