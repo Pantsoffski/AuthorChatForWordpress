@@ -49,22 +49,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //hide actionbar when scroll down
-                if (visibleItemCount > firstVisibleItem) {
-/*                    if (getSupportActionBar().isShowing()) { // TODO: 28.06.2017 try to handle NPE here
-                        getSupportActionBar().hide();
-                    }*/
+                //hide actionbar and show down button when scroll up
+                final int lastItem = firstVisibleItem + visibleItemCount;
+                if (lastItem == totalItemCount) {
+                    if (!getSupportActionBar().isShowing()) { // TODO: 28.06.2017 try to handle NPE here
+                        getSupportActionBar().show();
+                    }
 
-                    if (downButton.getVisibility() == View.VISIBLE) { // TODO: 28.06.2017 fix show and hie down button
+                    if (downButton.getVisibility() == View.VISIBLE) {
                         downButton.setVisibility(View.INVISIBLE);
                     }
-                }
-
-                //hide/show floating button
-                if (visibleItemCount < firstVisibleItem) {
-/*                    if (!getSupportActionBar().isShowing()) {
-                        getSupportActionBar().show();
-                    }*/
+                } else {
+                    if (getSupportActionBar().isShowing()) {
+                        getSupportActionBar().hide();
+                    }
 
                     if (downButton.getVisibility() == View.INVISIBLE) {
                         downButton.setVisibility(View.VISIBLE);
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //scroll to top when floating button is pressed
+        //scroll to bottom when floating button is pressed
         downButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 listView.setSelection(adapterRefreshed.getCount() - 1);

@@ -36,7 +36,7 @@ class CustomAdapter extends ArrayAdapter<CustomArrayList> {
 
         nickView.setText(currentString.nick);
         dateView.setText(currentString.date);
-        chatView.setText(currentString.chat.replace("&#34;", "\""));
+        chatView.setText(currentString.chat.replace("&#34;", "\"")); //plus replace quotation mark &#34; to "
 
         return listItemView;
     }
