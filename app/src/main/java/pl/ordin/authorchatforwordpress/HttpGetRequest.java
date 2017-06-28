@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Class {@link HttpGetRequest} is responsible for url (wiki) leech.
+ * Class {@link HttpGetRequest} is responsible for url leech.
  */
 class HttpGetRequest extends AsyncTask<String, Void, ArrayList<CustomArrayList>> {
     private static final String REQUEST_METHOD = "GET";

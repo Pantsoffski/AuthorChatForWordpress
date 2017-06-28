@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * {@link CustomAdapter} this is my custom adapter, responsible for creating custom list.
+ * {@link CustomAdapter} this is my custom adapter, responsible for creating custom list for chat
  */
 class CustomAdapter extends ArrayAdapter<CustomArrayList> {
 
@@ -36,7 +36,7 @@ class CustomAdapter extends ArrayAdapter<CustomArrayList> {
 
         nickView.setText(currentString.nick);
         dateView.setText(currentString.date);
-        chatView.setText(currentString.chat);
+        chatView.setText(currentString.chat.replace("&#34;", "\""));
 
         return listItemView;
     }

@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/**
+ * Class {@link ChatCreator} is responsible processing JSON object.
+ */
 class ChatCreator {
 
     ArrayList<CustomArrayList> readJsonStream(InputStreamReader streamReader) throws IOException {
