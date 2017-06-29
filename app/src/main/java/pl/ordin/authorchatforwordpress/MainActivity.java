@@ -1,5 +1,6 @@
 package pl.ordin.authorchatforwordpress;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+/**
+ * {@link MainActivity} shows Author Chat from Wordpress website.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton downButton;
@@ -30,7 +34,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<CustomArrayList> result;
         //Perform the doInBackground method, passing in our url
         try {
-            result = getRequest.execute("https://ordin.pl/wp-json/author-chat/v2/chat/").get();
+            //get values from SharedPreferences
+            SharedPreferences settings = getSharedPreferences("AuthorChatSettings", 0);
+            String code = settings.getString("code", "none");
+            String domain = settings.getString("domain", "none");
+
+            result = getRequest.execute(domain + "/wp-json/author-chat/v2/" + code + "/chat/").get();
         } catch (Exception e) {
             e.printStackTrace();
             result = null;

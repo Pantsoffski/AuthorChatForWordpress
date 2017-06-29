@@ -24,13 +24,12 @@
         android:id="@+id/editCode"
         android:layout_width="124dp"
         android:layout_height="44dp"
-        android:layout_marginBottom="151dp"
+        android:layout_marginBottom="54dp"
         android:ems="10"
         android:gravity="center_horizontal"
         android:hint="@string/code_placeholder"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
@@ -54,6 +53,17 @@
         android:layout_marginBottom="13dp"
         android:text="@string/code_instruction"
         app:layout_constraintBottom_toTopOf="@+id/editCode"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="62dp"
+        android:onClick="submitCodeDomain"
+        android:text="Confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 </android.support.constraint.ConstraintLayout>
