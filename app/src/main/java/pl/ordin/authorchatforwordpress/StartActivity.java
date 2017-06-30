@@ -17,6 +17,8 @@ import static android.webkit.URLUtil.isValidUrl;
  */
 public class StartActivity extends AppCompatActivity {
 
+    Utility utility = new Utility(getBaseContext(), this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,7 @@ public class StartActivity extends AppCompatActivity {
             //validate url
             if (isValidUrl(domainName)) {
                 e.putString("domain", domain.getText().toString());
-                e.putString("code", code.getText().toString());
+                e.putInt("code", Integer.parseInt(code.getText().toString()));
                 e.apply();
 
                 //start MainActivity.class
@@ -45,11 +47,11 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(intent);
             } else {
                 //show alert if url is invalid
-                new Utility(getBaseContext(), this).warningAlert("Info", "Domain name invalid! Plz check it has \"http://\" or \"https://\" fragment...");
+                utility.warningAlert("Info", "Domain name invalid! Plz check it has \"http://\" or \"https://\" fragment...");
             }
         } else {
             //show alert if internet is unavailable
-            new Utility(getBaseContext(), this).warningAlert("Info", "Internet not available, Cross check your internet connectivity and try again!");
+            utility.warningAlert("Info", "Internet not available, Cross check your internet connectivity and try again!");
         }
     }
 

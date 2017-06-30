@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         downButton = (FloatingActionButton) findViewById(R.id.downFAB);
 
         //Instantiate new instance of our class
-        HttpGetRequest getRequest = new HttpGetRequest();
+        HttpGetRequest getRequest = new HttpGetRequest(this);
 
         ArrayList<CustomArrayList> result;
         //Perform the doInBackground method, passing in our url
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             String code = settings.getString("code", "none");
             String domain = settings.getString("domain", "none");
 
-            result = getRequest.execute(domain + "/wp-json/author-chat/v2/" + code + "/chat/").get();
+            result = getRequest.execute(domain + "/wp-json/author-chat/v2/" + code).get();
         } catch (Exception e) {
             e.printStackTrace();
             result = null;

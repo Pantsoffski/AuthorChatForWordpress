@@ -10,10 +10,16 @@ import android.content.ContextWrapper;
  */
 public class Utility extends ContextWrapper {
     Activity activity;
+    Context context;
 
     public Utility(Context context, Activity activity) { // Context&activity constructor
         super(context);
         this.activity = activity;
+    }
+
+    public Utility(Context context) { // Context constructor
+        super(context);
+        this.context = context;
     }
 
     //responsible for alerts pop-ups

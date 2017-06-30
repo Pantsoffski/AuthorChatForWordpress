@@ -1,5 +1,6 @@
 package pl.ordin.authorchatforwordpress;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import java.io.IOException;
@@ -15,6 +16,11 @@ class HttpGetRequest extends AsyncTask<String, Void, ArrayList<CustomArrayList>>
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private Context context;
+
+    HttpGetRequest(Context context) { // Context&activity constructor
+        this.context = context; // TODO: 30.06.2017 fix this, can't leech anything with this constructor and context 
+    }
 
     @Override
     protected ArrayList<CustomArrayList> doInBackground(String... params) {
@@ -41,7 +47,7 @@ class HttpGetRequest extends AsyncTask<String, Void, ArrayList<CustomArrayList>>
             InputStreamReader streamReader = new
                     InputStreamReader(connection.getInputStream());
 
-            ChatCreator chatCreator = new ChatCreator();
+            ChatCreator chatCreator = new ChatCreator(context);
 
             result = chatCreator.readJsonStream(streamReader);
 
