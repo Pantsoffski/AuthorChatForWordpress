@@ -17,22 +17,33 @@ import static android.webkit.URLUtil.isValidUrl;
  */
 public class StartActivity extends AppCompatActivity {
 
-    Utility utility = new Utility(getBaseContext(), this);
+    Utility utility = new Utility(this);
+    SharedPreferences settings;
+    EditText code;
+    EditText domain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        settings = getSharedPreferences("AuthorChatSettings", 0);
+        code = (EditText) findViewById(R.id.editCode);
+        domain = (EditText) findViewById(R.id.editUrl);
+
+        int userPinToPut = settings.getInt("code", 0);
+        String domainToPut = settings.getString("domain", "none");
+
+        if (userPinToPut != 0 && !domainToPut.equals("none")) {
+            domain.setText(domainToPut);
+            code.setText(String.valueOf(userPinToPut));
+        }
     }
 
     //ignite when confirm button is pressed
     public void submitCodeDomain(View view) {
         if (isNetworkAvailable()) {
-            EditText code = (EditText) findViewById(R.id.editCode);
-            EditText domain = (EditText) findViewById(R.id.editUrl);
 
-            //store start activity values in SharedPreferences
-            SharedPreferences settings = getSharedPreferences("AuthorChatSettings", 0);
             SharedPreferences.Editor e = settings.edit();
 
             String domainName = domain.getText().toString();

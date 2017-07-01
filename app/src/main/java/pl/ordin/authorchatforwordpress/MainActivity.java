@@ -10,10 +10,12 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
+
 /**
  * {@link MainActivity} shows Author Chat from Wordpress website.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments and auto-refresh
 
     private FloatingActionButton downButton;
     private ListView listView;
@@ -29,26 +31,35 @@ public class MainActivity extends AppCompatActivity {
         downButton = (FloatingActionButton) findViewById(R.id.downFAB);
 
         //Instantiate new instance of our class
-        HttpGetRequest getRequest = new HttpGetRequest(this);
+        HttpGetRequest getRequest = new HttpGetRequest();
+
+        SharedPreferences settings = getSharedPreferences("AuthorChatSettings", 0);
 
         ArrayList<CustomArrayList> result;
         //Perform the doInBackground method, passing in our url
         try {
             //get values from SharedPreferences
-            SharedPreferences settings = getSharedPreferences("AuthorChatSettings", 0);
-            String code = settings.getString("code", "none");
             String domain = settings.getString("domain", "none");
 
-            result = getRequest.execute(domain + "/wp-json/author-chat/v2/" + code).get();
+            result = getRequest.execute(domain + "/wp-json/author-chat/v2/chat/").get();
         } catch (Exception e) {
             e.printStackTrace();
             result = null;
         }
 
         if (result != null) {
+            //validate PIN code
+            int userPin = settings.getInt("code", 0);
+            if (pin != userPin) {
+                new Utility(this).warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
+                return;
+            }
             adapterRefreshed = new CustomAdapter(getApplicationContext(), result);
             listView.setAdapter(adapterRefreshed);
             listView.setSelection(adapterRefreshed.getCount() - 1); //scroll down at start
+        } else {
+            new Utility(this).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
+            return;
         }
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -58,24 +69,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //hide actionbar and show down button when scroll up
+
+
+                //hide/show down button when scroll up&down
                 final int lastItem = firstVisibleItem + visibleItemCount;
                 if (lastItem == totalItemCount) {
-                    if (!getSupportActionBar().isShowing()) { // TODO: 28.06.2017 try to handle NPE here
-                        getSupportActionBar().show();
-                    }
-
                     if (downButton.getVisibility() == View.VISIBLE) {
                         downButton.setVisibility(View.INVISIBLE);
                     }
-                } else {
-                    if (getSupportActionBar().isShowing()) {
-                        getSupportActionBar().hide();
-                    }
 
+                } else {
                     if (downButton.getVisibility() == View.INVISIBLE) {
                         downButton.setVisibility(View.VISIBLE);
                     }
+
+
                 }
             }
         });
@@ -86,5 +94,10 @@ public class MainActivity extends AppCompatActivity {
                 listView.setSelection(adapterRefreshed.getCount() - 1);
             }
         });
+
+        //hide action bar on chat view
+        if (getSupportActionBar().isShowing()) {
+            getSupportActionBar().hide();
+        }
     }
 }

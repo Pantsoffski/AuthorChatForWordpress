@@ -1,7 +1,5 @@
 package pl.ordin.authorchatforwordpress;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.JsonReader;
 
 import java.io.IOException;
@@ -12,11 +10,7 @@ import java.util.ArrayList;
  * Class {@link ChatCreator} is responsible processing JSON object.
  */
 class ChatCreator {
-    private Context context;
-
-    ChatCreator(Context context) {
-        this.context = context;
-    }
+    public static int pin = 0;
 
     ArrayList<CustomArrayList> readJsonStream(InputStreamReader streamReader) throws IOException {
 
@@ -51,15 +45,10 @@ class ChatCreator {
                     }
                     jsonReader.endArray();
                 } else if (name.equals("pin")) {
-                    int pin = 1;
                     while (jsonReader.hasNext()) {
                         pin = jsonReader.nextInt();
                     }
-                    SharedPreferences settings = context.getApplicationContext().getSharedPreferences("AuthorChatSettings", 0);
-                    int userPin = settings.getInt("code", 0);
-/*                    if (pin != userPin) {
-                        new Utility(context).warningAlert("Info", "PIN code doesn't match, plz check it again!");
-                    }*/
+
                 } else {
                     jsonReader.skipValue(); // Skip values of other names
                 }
