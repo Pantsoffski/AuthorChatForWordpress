@@ -1,7 +1,7 @@
 package pl.ordin.authorchatforwordpress;
 
 /**
- * {@link CustomArrayList} this is my custom array list object.
+ * {@link CustomArrayList} custom array list object.
  */
 class CustomArrayList {
     String nick;
