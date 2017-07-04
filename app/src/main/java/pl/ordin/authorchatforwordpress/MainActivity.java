@@ -2,11 +2,14 @@ package pl.ordin.authorchatforwordpress;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -17,19 +20,28 @@ import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
  */
 public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments and auto-refresh
 
-    private FloatingActionButton downButton;
+    final Handler handler = new Handler();
+    Runnable r = new Runnable() {
+        public void run() {
+            Log.i("Run", "It's running");
+            handler.postDelayed(this, 4000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        handler.postDelayed(r, 4000);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //downButton = (FloatingActionButton) findViewById(R.id.downFAB);
+        FloatingActionButton downButton = (FloatingActionButton) findViewById(R.id.downFAB);
 
         //Instantiate new instance of our class
         HttpGetRequest getRequest = new HttpGetRequest();
@@ -56,22 +68,45 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
                 return;
             }
             //create adapter and connect it with RecyclerView
-            recyclerView.setAdapter(new RecyclerViewAdapter(result, recyclerView));
+            RecyclerViewAdapter adapter = new RecyclerViewAdapter(result, recyclerView);
+            recyclerView.setAdapter(adapter);
+            recyclerView.scrollToPosition(result.size() - 1);
+
+            adapter.notifyDataSetChanged();
         } else {
             new Utility(this).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
             return;
         }
 
         //scroll to bottom when floating button is pressed
-/*        downButton.setOnClickListener(new View.OnClickListener() {
+        final int resultSize = result.size();
+        downButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                listView.setSelection(adapterRefreshed.getCount() - 1);
+                recyclerView.scrollToPosition(resultSize - 1);
             }
-        });*/
+        });
 
         //hide action bar on chat view
         if (getSupportActionBar().isShowing()) {
             getSupportActionBar().hide();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(r);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(r);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.postDelayed(r, 4000);
     }
 }

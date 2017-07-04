@@ -56,7 +56,7 @@ class ChatCreator {
             jsonReader.endObject();
 
             //put all values to CustomArrayList
-            for (int i = 0; i <= nick.size(); i++) {
+            for (int i = 0; i < nick.size(); i++) {
                 chatToShowList.add(new CustomArrayList(nick.get(i), chat.get(i), date.get(i)));
             }
 
