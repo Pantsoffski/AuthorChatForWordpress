@@ -17,7 +17,7 @@ import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
 /**
  * {@link MainActivity} shows Author Chat from Wordpress website.
  */
-public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments and auto-refresh
+public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments
 
     final Handler handler = new Handler();
     Runnable r;

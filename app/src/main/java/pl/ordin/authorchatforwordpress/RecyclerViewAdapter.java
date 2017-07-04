@@ -31,6 +31,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter {
 
         CustomArrayList singleChat = chatting.get(i);
         ((MyViewHolder) viewHolder).nickView.setText(singleChat.nick);
+        ((MyViewHolder) viewHolder).nickView.setTextColor(new Utility(null).hexColorGenerator(singleChat.nick)); //set nick color (nick as a seed)
         ((MyViewHolder) viewHolder).dateView.setText(singleChat.date);
         ((MyViewHolder) viewHolder).chatView.setText(singleChat.chat.replace("&#34;", "\"")); //plus replace quotation mark &#34; to "
     }
