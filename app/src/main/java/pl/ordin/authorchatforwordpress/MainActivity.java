@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -21,12 +20,9 @@ import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
 public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments and auto-refresh
 
     final Handler handler = new Handler();
-    Runnable r = new Runnable() {
-        public void run() {
-            Log.i("Run", "It's running");
-            handler.postDelayed(this, 4000);
-        }
-    };
+    Runnable r;
+    SharedPreferences settings;
+    ArrayList<CustomArrayList> firstResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +37,63 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        FloatingActionButton downButton = (FloatingActionButton) findViewById(R.id.downFAB);
+        final FloatingActionButton downButton = (FloatingActionButton) findViewById(R.id.downFAB);
+
+        settings = getSharedPreferences("AuthorChatSettings", 0);
+        firstResult = getContent();
+
+        if (firstResult != null) {
+            //validate PIN code
+            int userPin = settings.getInt("code", 0);
+            if (pin != userPin) {
+                new Utility(this).warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
+                return;
+            }
+            //create adapter and connect it with RecyclerView
+            final RecyclerViewAdapter adapter = new RecyclerViewAdapter(firstResult);
+            recyclerView.setAdapter(adapter);
+            recyclerView.scrollToPosition(firstResult.size() - 1); //scroll to bottom at start
+
+            //new chat lines checking, if new line available, refresh adapter and view
+            r = new Runnable() {
+                public void run() {
+                    ArrayList<CustomArrayList> refreshedResult = getContent();
+                    if (refreshedResult.size() != firstResult.size()) {
+                        adapter.setItems(refreshedResult); //send refreshedResult to adapter
+                        adapter.notifyDataSetChanged(); //notify adapter that data was changed
+                        recyclerView.scrollToPosition(refreshedResult.size() - 1); //scroll to bottom
+                        downButton.setAlpha(0.25f);
+                    }
+                    handler.postDelayed(this, 4000);
+                }
+            };
+        } else {
+            new Utility(this).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
+            return;
+        }
+
+        //scroll to bottom when floating button is pressed
+        final int resultSize = firstResult.size();
+        downButton.setAlpha(0.25f);
+        downButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                downButton.setAlpha(1f);
+                recyclerView.scrollToPosition(resultSize - 1);
+            }
+        });
+
+        //hide action bar on chat view
+        if (getSupportActionBar().isShowing()) {
+            getSupportActionBar().hide();
+        }
+    }
+
+    private ArrayList<CustomArrayList> getContent() {
+        ArrayList<CustomArrayList> result;
 
         //Instantiate new instance of our class
         HttpGetRequest getRequest = new HttpGetRequest();
 
-        SharedPreferences settings = getSharedPreferences("AuthorChatSettings", 0);
-
-        ArrayList<CustomArrayList> result;
         //Perform the doInBackground method, passing in our url
         try {
             //get values from SharedPreferences
@@ -60,36 +105,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
             result = null;
         }
 
-        if (result != null) {
-            //validate PIN code
-            int userPin = settings.getInt("code", 0);
-            if (pin != userPin) {
-                new Utility(this).warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
-                return;
-            }
-            //create adapter and connect it with RecyclerView
-            RecyclerViewAdapter adapter = new RecyclerViewAdapter(result, recyclerView);
-            recyclerView.setAdapter(adapter);
-            recyclerView.scrollToPosition(result.size() - 1);
-
-            adapter.notifyDataSetChanged();
-        } else {
-            new Utility(this).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
-            return;
-        }
-
-        //scroll to bottom when floating button is pressed
-        final int resultSize = result.size();
-        downButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                recyclerView.scrollToPosition(resultSize - 1);
-            }
-        });
-
-        //hide action bar on chat view
-        if (getSupportActionBar().isShowing()) {
-            getSupportActionBar().hide();
-        }
+        return result;
     }
 
     @Override

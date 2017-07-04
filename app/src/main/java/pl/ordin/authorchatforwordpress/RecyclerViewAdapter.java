@@ -8,15 +8,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter {
+class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     private ArrayList<CustomArrayList> chatting = new ArrayList<>();
-    private RecyclerView recyclerView;
 
     //constructor
-    public RecyclerViewAdapter(ArrayList<CustomArrayList> chatting, RecyclerView recyclerView) {
+    RecyclerViewAdapter(ArrayList<CustomArrayList> chatting) {
         this.chatting = chatting;
-        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -24,19 +22,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.list_item, viewGroup, false);
-
-        //onClickListener that removes element after touch
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int positionToDelete = recyclerView.getChildAdapterPosition(v);
-
-                chatting.remove(positionToDelete);
-
-                notifyItemRemoved(positionToDelete);
-            }
-        });
 
         return new MyViewHolder(view);
     }
@@ -53,6 +38,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return chatting.size();
+    }
+
+    public void setItems(ArrayList<CustomArrayList> refreshedChat) {
+        this.chatting = refreshedChat;
     }
 
     //holder class
