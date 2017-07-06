@@ -1,6 +1,9 @@
 package pl.ordin.authorchatforwordpress;
 
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +18,20 @@ class HttpGetRequest extends AsyncTask<String, Void, ArrayList<CustomArrayList>>
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private Activity activity;
+
+    HttpGetRequest(Activity activity) {
+        this.activity = activity;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        //start progress bar visibility
+        if (activity != null) {
+            ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
+            bar.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     protected ArrayList<CustomArrayList> doInBackground(String... params) {
@@ -53,6 +70,16 @@ class HttpGetRequest extends AsyncTask<String, Void, ArrayList<CustomArrayList>>
         }
 
         return result;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<CustomArrayList> result) {
+        //end progress bar visibility
+        if (activity != null) {
+            ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
+            bar.setVisibility(View.INVISIBLE);
+        }
+        super.onPostExecute(result);
     }
 
 }

@@ -17,16 +17,17 @@ import static android.webkit.URLUtil.isValidUrl;
  */
 public class StartActivity extends AppCompatActivity {
 
-    Utility utility = new Utility(this);
     SharedPreferences settings;
     EditText code;
     EditText domain;
+    Utility utility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
+        utility = new Utility(this);
         settings = getSharedPreferences("AuthorChatSettings", 0);
         code = (EditText) findViewById(R.id.editCode);
         domain = (EditText) findViewById(R.id.editUrl);
@@ -41,7 +42,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     //ignite when confirm button is pressed
-    public void submitCodeDomain(View view) {
+    public void submitCodeDomain(View view) { // TODO: 06.07.2017 fix skipping frames 
         if (isNetworkAvailable()) {
 
             SharedPreferences.Editor e = settings.edit();
@@ -62,7 +63,7 @@ public class StartActivity extends AppCompatActivity {
             }
         } else {
             //show alert if internet is unavailable
-            utility.warningAlert("Info", "Internet not available, Cross check your internet connectivity and try again!");
+            utility.warningAlert("Info", "Internet not available, cross check your internet connectivity and try again!");
         }
     }
 

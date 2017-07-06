@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
     Runnable r;
     SharedPreferences settings;
     ArrayList<CustomArrayList> firstResult;
+    Utility utility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        utility = new Utility(this);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
             //validate PIN code
             int userPin = settings.getInt("code", 0);
             if (pin != userPin) {
-                new Utility(this).warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
+                utility.warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
                 return;
             }
             //create adapter and connect it with RecyclerView
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
                 }
             };
         } else {
-            new Utility(this).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
+            utility.warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
             return;
         }
 
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
         ArrayList<CustomArrayList> result;
 
         //Instantiate new instance of our class
-        HttpGetRequest getRequest = new HttpGetRequest();
+        HttpGetRequest getRequest = new HttpGetRequest(this);
 
         //Perform the doInBackground method, passing in our url
         try {

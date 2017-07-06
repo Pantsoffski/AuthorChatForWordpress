@@ -3,6 +3,8 @@ package pl.ordin.authorchatforwordpress;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 
 import java.util.Random;
@@ -12,15 +14,26 @@ import java.util.Random;
  */
 public class Utility extends ContextWrapper {
 
+    Context context;
+
     public Utility(Context context) { // Context&activity constructor
         super(context);
+        this.context = context;
     }
 
     //responsible for alerts pop-ups
     public void warningAlert(String title, String message) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        final Intent startIntent = new Intent(this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                startActivity(startIntent);
+            }
+        });
         alertDialog.show();
     }
 
