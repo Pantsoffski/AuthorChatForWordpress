@@ -3,16 +3,9 @@ package pl.ordin.authorchatforwordpress;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
-import java.util.ArrayList;
-
-import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
+import java.net.URL;
 
 /**
  * {@link MainActivity} shows Author Chat from Wordpress website.
@@ -22,8 +15,6 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
     final Handler handler = new Handler();
     Runnable r;
     SharedPreferences settings;
-    ArrayList<CustomArrayList> firstResult;
-    Utility utility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,57 +24,15 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        utility = new Utility(this);
+        getContent();
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        final FloatingActionButton downButton = (FloatingActionButton) findViewById(R.id.downFAB);
-
-        settings = getSharedPreferences("AuthorChatSettings", 0);
-        firstResult = getContent();
-
-        if (firstResult != null) {
-            //validate PIN code
-            int userPin = settings.getInt("code", 0);
-            if (pin != userPin) {
-                utility.warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
-                return;
+        //new chat lines checking, if new line available, refresh adapter and view
+        r = new Runnable() {
+            public void run() {
+                getContent();
+                handler.postDelayed(this, 4000);
             }
-            //create adapter and connect it with RecyclerView
-            final RecyclerViewAdapter adapter = new RecyclerViewAdapter(firstResult);
-            recyclerView.setAdapter(adapter);
-            recyclerView.scrollToPosition(firstResult.size() - 1); //scroll to bottom at start
-
-            //new chat lines checking, if new line available, refresh adapter and view
-            r = new Runnable() {
-                public void run() {
-                    ArrayList<CustomArrayList> refreshedResult = getContent();
-                    if (refreshedResult.size() != firstResult.size()) {
-                        adapter.setItems(refreshedResult); //send refreshedResult to adapter
-                        adapter.notifyDataSetChanged(); //notify adapter that data was changed
-                        recyclerView.scrollToPosition(refreshedResult.size() - 1); //scroll to bottom
-                        downButton.setAlpha(0.25f);
-                    }
-                    handler.postDelayed(this, 4000);
-                }
-            };
-        } else {
-            utility.warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
-            return;
-        }
-
-        //scroll to bottom when floating button is pressed
-        final int resultSize = firstResult.size();
-        downButton.setAlpha(0.25f);
-        downButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                downButton.setAlpha(1f);
-                recyclerView.scrollToPosition(resultSize - 1);
-            }
-        });
+        };
 
         //hide action bar on chat view
         if (getSupportActionBar().isShowing()) {
@@ -91,24 +40,18 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
         }
     }
 
-    private ArrayList<CustomArrayList> getContent() {
-        ArrayList<CustomArrayList> result;
-
-        //Instantiate new instance of our class
-        HttpGetRequest getRequest = new HttpGetRequest(this);
-
+    //get content from AsyncTask
+    private void getContent() {
+        settings = getSharedPreferences("AuthorChatSettings", 0);
         //Perform the doInBackground method, passing in our url
         try {
             //get values from SharedPreferences
-            String domain = settings.getString("domain", "none");
+            URL domain = new URL(settings.getString("domain", "none") + "/wp-json/author-chat/v2/chat/");
 
-            result = getRequest.execute(domain + "/wp-json/author-chat/v2/chat/").get();
+            new HttpGetRequest(this).execute(domain);
         } catch (Exception e) {
             e.printStackTrace();
-            result = null;
         }
-
-        return result;
     }
 
     @Override
