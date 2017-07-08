@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -25,25 +23,32 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
     private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private static boolean firstRun = true;
+    private static RecyclerViewAdapter adapter;
+    private static ArrayList<CustomArrayList> newResult, oldResult;
     private Activity activity;
-    private boolean progressOnce = true;
+    private RecyclerView recyclerView;
 
-    HttpGetRequest(Activity activity) {
+    HttpGetRequest(Activity activity, RecyclerView recyclerView) {
         this.activity = activity;
+        this.recyclerView = recyclerView;
     }
 
     @Override
     protected void onPreExecute() {
         //start progress bar visibility
-        if (activity != null && progressOnce) {
+        if (activity != null && firstRun) {
             ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
             bar.setVisibility(View.VISIBLE);
+        }
+
+        if (newResult != null) {
+            oldResult = newResult;
         }
     }
 
     @Override
     protected ArrayList<CustomArrayList> doInBackground(URL... urls) {
-        ArrayList<CustomArrayList> firstResult;
 
         try {
             //Create a URL object holding our url
@@ -67,31 +72,21 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
             ChatCreator chatCreator = new ChatCreator();
 
-            firstResult = chatCreator.readJsonStream(streamReader);
+            newResult = chatCreator.readJsonStream(streamReader);
 
             connection.disconnect();
 
         } catch (IOException e) {
             e.printStackTrace();
-            firstResult = null;
+            newResult = null;
         }
 
-        return firstResult;
+        return newResult;
     }
 
     @Override
     protected void onPostExecute(final ArrayList<CustomArrayList> result) {
-        //end progress bar visibility
-        if (activity != null) {
-            ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
-            bar.setVisibility(View.INVISIBLE);
-            progressOnce = false;
-        }
-
-        final RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        super.onPostExecute(result);
 
         SharedPreferences settings = activity.getSharedPreferences("AuthorChatSettings", 0);
 
@@ -102,10 +97,17 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                 new Utility(activity).warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
                 return;
             }
-            //create adapter and connect it with RecyclerView
-            final RecyclerViewAdapter adapter = new RecyclerViewAdapter(result);
-            recyclerView.setAdapter(adapter);
-            recyclerView.scrollToPosition(result.size() - 1); //scroll to bottom at start
+
+            if (firstRun) {
+                //create adapter and connect it with RecyclerView
+                adapter = new RecyclerViewAdapter(result); //adapter needs to be static in AsyncTask, because it overwriting him in each AsyncTask run
+                recyclerView.setAdapter(adapter);
+                recyclerView.scrollToPosition(result.size() - 1); //scroll to bottom at start
+            } else if (oldResult.size() != newResult.size()) { //compare old and new ArrayList<CustomArrayList> results, if now equal than refresh adapter and scroll to new message
+                adapter.setItems(result);
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(result.size() - 1);
+            }
 
             //scroll to bottom when floating button is pressed
             final FloatingActionButton downButton = (FloatingActionButton) activity.findViewById(R.id.downFAB);
@@ -122,7 +124,12 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
             return;
         }
 
-        super.onPostExecute(result);
+        //end progress bar visibility
+        if (activity != null) {
+            ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
+            bar.setVisibility(View.INVISIBLE);
+            firstRun = false;
+        }
     }
 
 }
