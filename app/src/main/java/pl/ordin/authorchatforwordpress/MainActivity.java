@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
             //get values from SharedPreferences
             URL domain = new URL(settings.getString("domain", "none") + "/wp-json/author-chat/v2/chat/");
 
-            new HttpGetRequest(this, recyclerView).execute(domain);
+            new HttpGetRequest(this, recyclerView, "GET").execute(domain);
         } catch (Exception e) {
             e.printStackTrace();
         }

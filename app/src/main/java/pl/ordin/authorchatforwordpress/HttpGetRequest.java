@@ -20,18 +20,19 @@ import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
  * Class {@link HttpGetRequest} is responsible for url leech.
  */
 class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
-    private static final String REQUEST_METHOD = "GET";
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
     private static boolean firstRun = true;
     private static RecyclerViewAdapter adapter;
     private static ArrayList<CustomArrayList> newResult, oldResult;
+    private String requestMethod = "";
     private Activity activity;
     private RecyclerView recyclerView;
 
-    HttpGetRequest(Activity activity, RecyclerView recyclerView) {
+    HttpGetRequest(Activity activity, RecyclerView recyclerView, String method) {
         this.activity = activity;
         this.recyclerView = recyclerView;
+        this.requestMethod = method;
     }
 
     @Override
@@ -59,7 +60,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                     myUrl.openConnection();
 
             //Set methods and timeouts
-            connection.setRequestMethod(REQUEST_METHOD);
+            connection.setRequestMethod(requestMethod);
             connection.setReadTimeout(READ_TIMEOUT);
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
 

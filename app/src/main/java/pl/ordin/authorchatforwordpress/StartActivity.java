@@ -42,7 +42,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     //ignite when confirm button is pressed
-    public void submitCodeDomain(View view) { // TODO: 06.07.2017 fix skipping frames 
+    public void submitCodeDomain(View view) {
         if (isNetworkAvailable()) {
 
             SharedPreferences.Editor e = settings.edit();
