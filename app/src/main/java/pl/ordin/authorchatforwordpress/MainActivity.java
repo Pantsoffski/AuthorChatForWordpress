@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
             URL domain = new URL(settings.getString("domain", "none") + "/wp-json/author-chat/v2/chat/");
 
             new HttpGetRequest(this, recyclerView, "GET").execute(domain);
+
+            new HttpGetRequest(this, recyclerView, "POST", "1", "Marian", "test message again", "login", "pass").execute(domain); // TODO: 26.07.2017 form for l&p 
         } catch (Exception e) {
             e.printStackTrace();
         }
