@@ -54,17 +54,19 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
         try {
             //get values from SharedPreferences
             URL domain = new URL(settings.getString("domain", "none") + "/wp-json/author-chat/v2/chat/");
+            String login = settings.getString("login", "none");
+            String password = settings.getString("password", "none");
 
-            new HttpGetRequest(this, recyclerView, "GET").execute(domain);
+            new HttpGetRequest(this, recyclerView, login, password).execute(domain);
 
-            new HttpGetRequest(this, recyclerView, "POST", "1", "Marian", "test message again", "login", "pass").execute(domain); // TODO: 26.07.2017 form for l&p 
+            //new HttpGetRequest(this, recyclerView, "POST", "1", "Marian", "test message again", "login", "pass").execute(domain);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause() { // TODO: 31.07.2017 app stops refreshing after back button and login, add message form
         super.onPause();
         handler.removeCallbacks(r);
     }

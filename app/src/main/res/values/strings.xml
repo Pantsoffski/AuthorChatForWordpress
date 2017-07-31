@@ -3,7 +3,10 @@
     <string name="title_activity_start">Author Chat - Sign in</string>
     <string name="domain_placeholder">Domain name</string>
     <string name="domain_instruction">Put your domain name here, e.g. http://mydomain.com or https://www.mydomain.com</string>
-    <string name="code_placeholder">Code</string>
+    <string name="login_placeholder">Login</string>
+    <string name="password_placeholder">Password</string>
     <string name="code_instruction">4-digit PIN code from Author Chat plugin settings (e.g. 2345)</string>
     <string name="prompt_password">Password (optional)</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="message_placeholder">Write here...</string>
 </resources>

@@ -1,7 +1,6 @@
 package pl.ordin.authorchatforwordpress;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
@@ -19,36 +18,34 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import static pl.ordin.authorchatforwordpress.ChatCreator.pin;
-
 /**
  * Class {@link HttpGetRequest} is responsible for url leech.
  */
 class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private static final String REQUEST_METHOD = "POST";
     private static boolean firstRun = true;
     private static RecyclerViewAdapter adapter;
     private static ArrayList<CustomArrayList> newResult, oldResult;
-    private String requestMethod = "";
     private String userId = "";
     private String nickName = "";
-    private String message = "";
+    private String message = "2358";
     private String l = "";
     private String p = "";
     private Activity activity;
     private RecyclerView recyclerView;
 
-    HttpGetRequest(Activity activity, RecyclerView recyclerView, String method) {
+    HttpGetRequest(Activity activity, RecyclerView recyclerView, String login, String pass) {
         this.activity = activity;
         this.recyclerView = recyclerView;
-        this.requestMethod = method;
+        this.l = login;
+        this.p = pass;
     }
 
-    HttpGetRequest(Activity activity, RecyclerView recyclerView, String method, String uid, String nick, String msg, String login, String pass) {
+    HttpGetRequest(Activity activity, RecyclerView recyclerView, String uid, String nick, String msg, String login, String pass) {
         this.activity = activity;
         this.recyclerView = recyclerView;
-        this.requestMethod = method;
         this.userId = uid;
         this.nickName = nick;
         this.message = msg;
@@ -72,17 +69,59 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
     @Override
     protected ArrayList<CustomArrayList> doInBackground(URL... urls) {
 
-        if (requestMethod.equals("POST")) {
+        if (!message.equals("2358")) { // TODO: 31.07.2017 clean up this mess in code (slim)
             try {
                 //Create a URL object holding our url
-                URL myUrl = urls[0]; // TODO: 26.07.2017 rewrite code (remove duplicates)
+                URL myUrl = urls[0];
 
                 //Create a connection
                 HttpURLConnection connection = (HttpURLConnection)
                         myUrl.openConnection();
 
                 //Set methods and timeouts
-                connection.setRequestMethod(requestMethod);
+                connection.setRequestMethod(REQUEST_METHOD);
+                connection.setReadTimeout(READ_TIMEOUT);
+                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("msg", message)
+                        .appendQueryParameter("l", l)
+                        .appendQueryParameter("p", p);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream outputStream = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(outputStream, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                outputStream.close();
+
+                //Connect to our url
+                connection.connect();
+                int responseCode = connection.getResponseCode();
+                Log.v("Response: ", Integer.toString(responseCode));
+                //connection.disconnect();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                newResult = null;
+            }
+        } else if (message.equals("2358")) {
+
+            try {
+                //Create a URL object holding our url
+                URL myUrl = urls[0];
+
+                //Create a connection
+                HttpURLConnection connection = (HttpURLConnection)
+                        myUrl.openConnection();
+
+                //Set methods and timeouts
+                connection.setRequestMethod(REQUEST_METHOD);
                 connection.setReadTimeout(READ_TIMEOUT);
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
                 connection.setDoInput(true);
@@ -97,41 +136,18 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                         .appendQueryParameter("p", p);
                 String query = builder.build().getEncodedQuery();
 
-                OutputStream os = connection.getOutputStream();
+                OutputStream outputStream = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                        new OutputStreamWriter(outputStream, "UTF-8"));
                 writer.write(query);
                 writer.flush();
                 writer.close();
-                os.close();
+                outputStream.close();
 
                 //Connect to our url
                 connection.connect();
                 int responseCode = connection.getResponseCode();
                 Log.v("Response: ", Integer.toString(responseCode));
-                //connection.disconnect();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                newResult = null;
-            }
-        } else if (requestMethod.equals("GET")) {
-
-            try {
-                //Create a URL object holding our url
-                URL myUrl = urls[0];
-
-                //Create a connection
-                HttpURLConnection connection = (HttpURLConnection)
-                        myUrl.openConnection();
-
-                //Set methods and timeouts
-                connection.setRequestMethod(requestMethod);
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
-
-                //Connect to our url
-                connection.connect();
 
                 //Create a new InputStreamReader
                 InputStreamReader streamReader = new
@@ -141,7 +157,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
                 newResult = chatCreator.readJsonStream(streamReader);
 
-                connection.disconnect();
+                //connection.disconnect();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -156,17 +172,8 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
     protected void onPostExecute(final ArrayList<CustomArrayList> result) {
         super.onPostExecute(result);
 
-        if (!requestMethod.equals("POST")) {
-            SharedPreferences settings = activity.getSharedPreferences("AuthorChatSettings", 0);
-
+        if (message.equals("2358")) {
             if (result != null) {
-                //validate PIN code
-                int userPin = settings.getInt("code", 0);
-                if (pin != userPin) {
-                    new Utility(activity).warningAlert("Info", "PIN code doesn't match, plz go back and check it again!");
-                    return;
-                }
-
                 if (firstRun) {
                     //create adapter and connect it with RecyclerView
                     adapter = new RecyclerViewAdapter(result); //adapter needs to be static in AsyncTask, because it overwriting him in each AsyncTask run

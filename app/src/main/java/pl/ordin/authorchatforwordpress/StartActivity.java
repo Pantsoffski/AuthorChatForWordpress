@@ -18,7 +18,8 @@ import static android.webkit.URLUtil.isValidUrl;
 public class StartActivity extends AppCompatActivity {
 
     SharedPreferences settings;
-    EditText code;
+    EditText login;
+    EditText password;
     EditText domain;
     Utility utility;
 
@@ -29,15 +30,18 @@ public class StartActivity extends AppCompatActivity {
 
         utility = new Utility(this);
         settings = getSharedPreferences("AuthorChatSettings", 0);
-        code = (EditText) findViewById(R.id.editCode);
+        login = (EditText) findViewById(R.id.editLogin);
+        password = (EditText) findViewById(R.id.editPassword);
         domain = (EditText) findViewById(R.id.editUrl);
 
-        int userPinToPut = settings.getInt("code", 0);
         String domainToPut = settings.getString("domain", "none");
+        String userLoginToPut = settings.getString("login", "none");
+        String userPasswordToPut = settings.getString("password", "none");
 
-        if (userPinToPut != 0 && !domainToPut.equals("none")) {
+        if (!userLoginToPut.equals("none") && !userPasswordToPut.equals("none") && !domainToPut.equals("none")) {
             domain.setText(domainToPut);
-            code.setText(String.valueOf(userPinToPut));
+            login.setText(userLoginToPut);
+            password.setText(userPasswordToPut);
         }
     }
 
@@ -51,7 +55,8 @@ public class StartActivity extends AppCompatActivity {
             //validate url
             if (isValidUrl(domainName)) {
                 e.putString("domain", domain.getText().toString());
-                e.putInt("code", Integer.parseInt(code.getText().toString()));
+                e.putString("login", login.getText().toString());
+                e.putString("password", password.getText().toString());
                 e.apply();
 
                 //start MainActivity.class
