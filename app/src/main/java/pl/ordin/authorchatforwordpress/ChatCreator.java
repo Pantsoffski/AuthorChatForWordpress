@@ -10,7 +10,6 @@ import java.util.ArrayList;
  * Class {@link ChatCreator} is responsible processing JSON object.
  */
 class ChatCreator {
-    public static int pin = 0;
 
     ArrayList<CustomArrayList> readJsonStream(InputStreamReader streamReader) throws IOException {
 
@@ -44,11 +43,6 @@ class ChatCreator {
                         date.add(jsonReader.nextString());
                     }
                     jsonReader.endArray();
-                } else if (name.equals("pin")) {
-                    while (jsonReader.hasNext()) {
-                        pin = jsonReader.nextInt();
-                    }
-
                 } else {
                     jsonReader.skipValue(); // Skip values of other names
                 }

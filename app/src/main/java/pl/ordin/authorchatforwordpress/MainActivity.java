@@ -7,31 +7,41 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.EditText;
 
 import java.net.URL;
+import java.util.ArrayList;
+
+import static pl.ordin.authorchatforwordpress.HttpGetRequest.firstRun;
 
 /**
  * {@link MainActivity} shows Author Chat from Wordpress website.
  */
 public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments
 
-    final Handler handler = new Handler();
+    final Handler handler = new Handler(); // TODO: 01.08.2017 soft keyboard hides bottom of edittext and button when popup 
+    public RecyclerView recyclerView;
     Runnable r;
     SharedPreferences settings;
+    EditText message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        handler.postDelayed(r, 4000); //delay
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new RecyclerViewAdapter(new ArrayList<CustomArrayList>())); //set empty ArrayList for adapter to avoid error: "RecyclerView﹕ No adapter attached; skipping layout"
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        message = (EditText) findViewById(R.id.editChatMessage);
+
         getContent(recyclerView);
+
+        handler.postDelayed(r, 4000); //delay
 
         //new chat lines checking, if new line available, refresh adapter and view
         r = new Runnable() {
@@ -59,16 +69,31 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
 
             new HttpGetRequest(this, recyclerView, login, password).execute(domain);
 
-            //new HttpGetRequest(this, recyclerView, "POST", "1", "Marian", "test message again", "login", "pass").execute(domain);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    protected void onPause() { // TODO: 31.07.2017 app stops refreshing after back button and login, add message form
-        super.onPause();
-        handler.removeCallbacks(r);
+    //put content to AsyncTask
+    public void putContent(View view) {
+        String messageText = message.getText().toString();
+        if (messageText != "") {
+            settings = getSharedPreferences("AuthorChatSettings", 0);
+            //Perform the doInBackground method, passing in our url
+            try {
+                //get values from SharedPreferences
+                URL domain = new URL(settings.getString("domain", "none") + "/wp-json/author-chat/v2/chat/");
+                String login = settings.getString("login", "none");
+                String password = settings.getString("password", "none");
+
+                new HttpGetRequest(messageText, login, password).execute(domain);
+
+                message.setText(""); //remove text after send
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -80,6 +105,8 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
     @Override
     protected void onResume() {
         super.onResume();
-        handler.postDelayed(r, 4000);
+        firstRun = true; //reset to first run variable in HttpGetRequest class
+        getContent(recyclerView); //leech new content immediately
+        handler.postDelayed(r, 4000); //restart handler delay
     }
 }

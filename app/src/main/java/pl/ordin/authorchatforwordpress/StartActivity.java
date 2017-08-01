@@ -46,7 +46,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     //ignite when confirm button is pressed
-    public void submitCodeDomain(View view) {
+    public void submitSignIn(View view) {
         if (isNetworkAvailable()) {
 
             SharedPreferences.Editor e = settings.edit();

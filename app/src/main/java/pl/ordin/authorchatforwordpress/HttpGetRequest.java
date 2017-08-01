@@ -25,11 +25,9 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
     private static final String REQUEST_METHOD = "POST";
-    private static boolean firstRun = true;
+    static boolean firstRun = true;
     private static RecyclerViewAdapter adapter;
     private static ArrayList<CustomArrayList> newResult, oldResult;
-    private String userId = "";
-    private String nickName = "";
     private String message = "2358";
     private String l = "";
     private String p = "";
@@ -43,11 +41,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
         this.p = pass;
     }
 
-    HttpGetRequest(Activity activity, RecyclerView recyclerView, String uid, String nick, String msg, String login, String pass) {
-        this.activity = activity;
-        this.recyclerView = recyclerView;
-        this.userId = uid;
-        this.nickName = nick;
+    HttpGetRequest(String msg, String login, String pass) {
         this.message = msg;
         this.l = login;
         this.p = pass;
@@ -129,8 +123,6 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
 
                 Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("uid", userId)
-                        .appendQueryParameter("nick", nickName)
                         .appendQueryParameter("msg", message)
                         .appendQueryParameter("l", l)
                         .appendQueryParameter("p", p);
@@ -179,10 +171,12 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                     adapter = new RecyclerViewAdapter(result); //adapter needs to be static in AsyncTask, because it overwriting him in each AsyncTask run
                     recyclerView.setAdapter(adapter);
                     recyclerView.scrollToPosition(result.size() - 1); //scroll to bottom at start
-                } else if (oldResult.size() != newResult.size()) { //compare old and new ArrayList<CustomArrayList> results, if now equal than refresh adapter and scroll to new message
-                    adapter.setItems(result);
-                    adapter.notifyDataSetChanged();
-                    recyclerView.scrollToPosition(result.size() - 1);
+                } else if (oldResult != null) {
+                    if (oldResult.size() != newResult.size()) {//compare old and new ArrayList<CustomArrayList> results, if now equal than refresh adapter and scroll to new message
+                        adapter.setItems(result);
+                        adapter.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(result.size() - 1);
+                    }
                 }
 
                 //scroll to bottom when floating button is pressed
@@ -196,7 +190,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                     }
                 });
             } else {
-                new Utility(activity).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name!");
+                new Utility(activity).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name or internet connection (or maybe your site is down)!");
                 return;
             }
 

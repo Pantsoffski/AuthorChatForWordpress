@@ -4,9 +4,7 @@ package pl.ordin.authorchatforwordpress;
  * {@link CustomArrayList} custom array list object.
  */
 class CustomArrayList {
-    String nick;
-    String chat;
-    String date;
+    String nick, chat, date;
 
     CustomArrayList(String n, String c, String d) {
         this.nick = n;
