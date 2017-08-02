@@ -18,9 +18,9 @@ import static pl.ordin.authorchatforwordpress.HttpGetRequest.firstRun;
 /**
  * {@link MainActivity} shows Author Chat from Wordpress website.
  */
-public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add comments
+public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add more comments
 
-    final Handler handler = new Handler(); // TODO: 01.08.2017 soft keyboard hides bottom of edittext and button when popup 
+    final Handler handler = new Handler();
     public RecyclerView recyclerView;
     Runnable r;
     SharedPreferences settings;
@@ -38,6 +38,14 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         message = (EditText) findViewById(R.id.editChatMessage);
+
+        //set listener to scroll recyclerView to bottom when keyboard pop-up
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
+            }
+        });
 
         getContent(recyclerView);
 
@@ -77,7 +85,7 @@ public class MainActivity extends AppCompatActivity { // TODO: 01.07.2017 add co
     //put content to AsyncTask
     public void putContent(View view) {
         String messageText = message.getText().toString();
-        if (messageText != "") {
+        if (!messageText.equals("")) {
             settings = getSharedPreferences("AuthorChatSettings", 0);
             //Perform the doInBackground method, passing in our url
             try {

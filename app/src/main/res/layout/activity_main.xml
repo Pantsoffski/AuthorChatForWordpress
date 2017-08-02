@@ -27,7 +27,7 @@
     <EditText
         android:id="@+id/editChatMessage"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="-1dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
@@ -35,7 +35,7 @@
         android:hint="@string/message_placeholder"
         android:inputType="textCapSentences|textMultiLine"
         android:maxLength="2000"
-        android:maxLines="5"
+        android:maxLines="3"
         android:scrollHorizontally="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -46,13 +46,14 @@
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginRight="0dp"
         android:onClick="putContent"
         android:text="@string/send_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recView"
-        app:layout_constraintVertical_bias="0.881" />
+        app:layout_constraintVertical_bias="0.884" />
 
     <FrameLayout
         android:id="@+id/frameLayout"

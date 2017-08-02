@@ -18,10 +18,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static pl.ordin.authorchatforwordpress.ChatCreator.ver;
+
 /**
  * Class {@link HttpGetRequest} is responsible for url leech.
  */
 class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
+    private static final String VER_TO_COMPARE = "1.7.5"; //for plugin version checking
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
     private static final String REQUEST_METHOD = "POST";
@@ -62,12 +65,11 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
     @Override
     protected ArrayList<CustomArrayList> doInBackground(URL... urls) {
+        //Create a URL object holding our url
+        URL myUrl = urls[0];
 
-        if (!message.equals("2358")) { // TODO: 31.07.2017 clean up this mess in code (slim)
+        if (!message.equals("2358")) {
             try {
-                //Create a URL object holding our url
-                URL myUrl = urls[0];
-
                 //Create a connection
                 HttpURLConnection connection = (HttpURLConnection)
                         myUrl.openConnection();
@@ -98,7 +100,8 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                 connection.connect();
                 int responseCode = connection.getResponseCode();
                 Log.v("Response: ", Integer.toString(responseCode));
-                //connection.disconnect();
+
+                connection.disconnect();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -107,9 +110,6 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
         } else if (message.equals("2358")) {
 
             try {
-                //Create a URL object holding our url
-                URL myUrl = urls[0];
-
                 //Create a connection
                 HttpURLConnection connection = (HttpURLConnection)
                         myUrl.openConnection();
@@ -138,8 +138,6 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
                 //Connect to our url
                 connection.connect();
-                int responseCode = connection.getResponseCode();
-                Log.v("Response: ", Integer.toString(responseCode));
 
                 //Create a new InputStreamReader
                 InputStreamReader streamReader = new
@@ -149,7 +147,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
                 newResult = chatCreator.readJsonStream(streamReader);
 
-                //connection.disconnect();
+                connection.disconnect();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -166,6 +164,12 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
         if (message.equals("2358")) {
             if (result != null) {
+
+                //checking for newest plugin version on wordpress website
+                if (!VER_TO_COMPARE.equals(ver)) {
+                    new Utility(activity).warningAlert("Error", "Wordpress Author Chat plugin version is too old, upgrade plugin on your website to newest version!");
+                }
+
                 if (firstRun) {
                     //create adapter and connect it with RecyclerView
                     adapter = new RecyclerViewAdapter(result); //adapter needs to be static in AsyncTask, because it overwriting him in each AsyncTask run
@@ -190,7 +194,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                     }
                 });
             } else {
-                new Utility(activity).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name or internet connection (or maybe your site is down)!");
+                new Utility(activity).warningAlert("Info", "Oops! Something went wrong... Plz go back and check domain name / internet connection / login / password (or maybe your site is down)!");
                 return;
             }
 
