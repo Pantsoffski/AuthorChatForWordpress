@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add mo
 
             new HttpGetRequest(this, recyclerView, login, password).execute(domain);
 
+            new Utility(this).pushNotification(); // TODO: 05.08.2017 create background service to popup notification about new messages 
+
         } catch (Exception e) {
             e.printStackTrace();
         }
