@@ -8,6 +8,8 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v7.app.NotificationCompat;
 
 import java.util.Random;
@@ -52,9 +54,13 @@ public class Utility extends ContextWrapper {
 
     //notifications
     public void pushNotification() {
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION); //get notification sound
         NotificationCompat.Builder builder =
                 (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_stat_announcement)
+                        .setAutoCancel(true) //remove notification after touch
+                        .setSound(alarmSound)
+                        .setOnlyAlertOnce(true) //sound only at first notification pop-up
                         .setContentTitle("Author Chat")
                         .setContentText("New message is here!");
         int NOTIFICATION_ID = 54387;

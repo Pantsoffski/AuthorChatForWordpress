@@ -20,10 +20,11 @@ import static pl.ordin.authorchatforwordpress.HttpGetRequest.firstRun;
  */
 public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add more comments
 
+    public static boolean onBackground;
     final Handler handler = new Handler();
     public RecyclerView recyclerView;
+    public SharedPreferences settings;
     Runnable r;
-    SharedPreferences settings;
     EditText message;
 
     @Override
@@ -77,8 +78,6 @@ public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add mo
 
             new HttpGetRequest(this, recyclerView, login, password).execute(domain);
 
-            new Utility(this).pushNotification(); // TODO: 05.08.2017 create background service to popup notification about new messages 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,7 +108,9 @@ public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add mo
     @Override
     protected void onStop() {
         super.onStop();
-        handler.removeCallbacks(r);
+        handler.removeCallbacks(r); //clean up handler
+        handler.postDelayed(r, 10000); //restart handler with longest delay
+        onBackground = true;
     }
 
     @Override
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add mo
         super.onResume();
         firstRun = true; //reset to first run variable in HttpGetRequest class
         getContent(recyclerView); //leech new content immediately
+        handler.removeCallbacks(r); //clean up handler
         handler.postDelayed(r, 4000); //restart handler delay
+        onBackground = false;
     }
 }

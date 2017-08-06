@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import static pl.ordin.authorchatforwordpress.ChatCreator.ver;
+import static pl.ordin.authorchatforwordpress.MainActivity.onBackground;
+import static pl.ordin.authorchatforwordpress.StartActivity.notificationsOnOff;
 
 /**
  * Class {@link HttpGetRequest} is responsible for url leech.
@@ -179,6 +181,9 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                     if (oldResult.size() != newResult.size()) {//compare old and new ArrayList<CustomArrayList> results, if now equal than refresh adapter and scroll to new message
                         adapter.setItems(result);
                         adapter.notifyDataSetChanged();
+                        if (onBackground && notificationsOnOff) { //if app is on background && notifications option is checked
+                            new Utility(activity).pushNotification(); // TODO: 05.08.2017 test it
+                        }
                         recyclerView.scrollToPosition(result.size() - 1);
                     }
                 }

@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import static android.webkit.URLUtil.isValidUrl;
@@ -17,11 +18,13 @@ import static android.webkit.URLUtil.isValidUrl;
  */
 public class StartActivity extends AppCompatActivity {
 
+    static boolean notificationsOnOff;
     SharedPreferences settings;
     EditText login;
     EditText password;
     EditText domain;
     Utility utility;
+    CheckBox notificationCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +36,20 @@ public class StartActivity extends AppCompatActivity {
         login = (EditText) findViewById(R.id.editLogin);
         password = (EditText) findViewById(R.id.editPassword);
         domain = (EditText) findViewById(R.id.editUrl);
+        notificationCheckBox = (CheckBox) findViewById(R.id.notificationsCheckBox);
 
         String domainToPut = settings.getString("domain", "none");
         String userLoginToPut = settings.getString("login", "none");
         String userPasswordToPut = settings.getString("password", "none");
+        notificationsOnOff = settings.getBoolean("notificationsOnOff", false);
 
         if (!userLoginToPut.equals("none") && !userPasswordToPut.equals("none") && !domainToPut.equals("none")) {
             domain.setText(domainToPut);
             login.setText(userLoginToPut);
             password.setText(userPasswordToPut);
+            if (notificationsOnOff) {
+                notificationCheckBox.setChecked(true);
+            }
         }
     }
 
@@ -57,7 +65,14 @@ public class StartActivity extends AppCompatActivity {
                 e.putString("domain", domain.getText().toString());
                 e.putString("login", login.getText().toString());
                 e.putString("password", password.getText().toString());
+                if (notificationCheckBox.isChecked()) {
+                    e.putBoolean("notificationsOnOff", true);
+                } else {
+                    e.putBoolean("notificationsOnOff", false);
+                }
                 e.apply();
+
+                notificationsOnOff = settings.getBoolean("notificationsOnOff", false);
 
                 //start MainActivity.class
                 Intent intent = new Intent(this, MainActivity.class);

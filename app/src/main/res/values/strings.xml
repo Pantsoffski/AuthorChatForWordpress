@@ -8,5 +8,6 @@
     <string name="prompt_password">Password (optional)</string>
     <string name="confirm_button">Confirm</string>
     <string name="send_button">Send</string>
+    <string name="notification_checkbox">Notifications</string>
     <string name="message_placeholder">Write here...</string>
 </resources>
