@@ -20,11 +20,11 @@ import static pl.ordin.authorchatforwordpress.HttpGetRequest.firstRun;
  */
 public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add more comments
 
+    static final Handler handler = new Handler();
     public static boolean onBackground;
-    final Handler handler = new Handler();
+    static Runnable r;
     public RecyclerView recyclerView;
     public SharedPreferences settings;
-    Runnable r;
     EditText message;
 
     @Override

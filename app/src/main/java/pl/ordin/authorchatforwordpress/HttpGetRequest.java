@@ -182,7 +182,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                         adapter.setItems(result);
                         adapter.notifyDataSetChanged();
                         if (onBackground && notificationsOnOff) { //if app is on background && notifications option is checked
-                            new Utility(activity).pushNotification(); // TODO: 05.08.2017 test it
+                            new Utility(activity).pushNotification();
                         }
                         recyclerView.scrollToPosition(result.size() - 1);
                     }
