@@ -166,7 +166,6 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
 
         if (message.equals("2358")) {
             if (result != null) {
-
                 //checking for newest plugin version on wordpress website
                 if (!VER_TO_COMPARE.equals(ver)) {
                     new Utility(activity).warningAlert("Error", "Wordpress Author Chat plugin version is too old, upgrade plugin on your website to newest version!");
@@ -181,7 +180,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                         adapter.setItems(result);
                         adapter.notifyDataSetChanged();
                         if (onBackground && notificationsOnOff) { //if app is on background && notifications option is checked
-                            new Utility(activity).pushNotification("message text");
+                            new Utility(activity).pushNotification(result.get(result.size() - 1).nick + ": " + result.get(result.size() - 1).chat); //put nick and message from last ArrayList row to notification
                         }
                         recyclerView.scrollToPosition(result.size() - 1);
                     }
