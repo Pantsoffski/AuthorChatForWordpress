@@ -53,7 +53,7 @@ public class Utility extends ContextWrapper {
     }
 
     //notifications
-    public void pushNotification() {
+    public void pushNotification(String message) {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION); //get notification sound
         NotificationCompat.Builder builder =
                 (NotificationCompat.Builder) new NotificationCompat.Builder(this)
@@ -62,11 +62,11 @@ public class Utility extends ContextWrapper {
                         .setSound(alarmSound)
                         .setOnlyAlertOnce(true) //sound only at first notification pop-up
                         .setContentTitle("Author Chat")
-                        .setContentText("New message is here!");
+                        .setContentText(message);
         int NOTIFICATION_ID = 54387;
 
         Intent targetIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(contentIntent);
         NotificationManager nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nManager.notify(NOTIFICATION_ID, builder.build());

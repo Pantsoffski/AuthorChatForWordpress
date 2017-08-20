@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import static pl.ordin.authorchatforwordpress.MainActivity.handler;
+import static pl.ordin.authorchatforwordpress.MainActivity.onBackground;
 import static pl.ordin.authorchatforwordpress.MainActivity.r;
 
 /**
@@ -17,6 +18,7 @@ public class AppBroadcastReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
             handler.removeCallbacks(r); //clean up handler
             handler.postDelayed(r, 10000); //restart handler with longest delay
+            onBackground = true;
         }
     }
 }

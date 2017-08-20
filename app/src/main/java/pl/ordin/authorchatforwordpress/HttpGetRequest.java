@@ -33,11 +33,11 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
     static boolean firstRun = true;
     private static RecyclerViewAdapter adapter;
     private static ArrayList<CustomArrayList> newResult, oldResult;
+    RecyclerView recyclerView;
     private String message = "2358";
     private String l = "";
     private String p = "";
     private Activity activity;
-    private RecyclerView recyclerView;
 
     HttpGetRequest(Activity activity, RecyclerView recyclerView, String login, String pass) {
         this.activity = activity;
@@ -172,8 +172,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                     new Utility(activity).warningAlert("Error", "Wordpress Author Chat plugin version is too old, upgrade plugin on your website to newest version!");
                 }
 
-                if (firstRun) {
-                    //create adapter and connect it with RecyclerView
+                if (firstRun && adapter == null || recyclerView.getAdapter().getItemCount() == 0) { //if first run and adapter is null or view is empty (count zero rows)
                     adapter = new RecyclerViewAdapter(result); //adapter needs to be static in AsyncTask, because it overwriting him in each AsyncTask run
                     recyclerView.setAdapter(adapter);
                     recyclerView.scrollToPosition(result.size() - 1); //scroll to bottom at start
@@ -182,7 +181,7 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                         adapter.setItems(result);
                         adapter.notifyDataSetChanged();
                         if (onBackground && notificationsOnOff) { //if app is on background && notifications option is checked
-                            new Utility(activity).pushNotification();
+                            new Utility(activity).pushNotification("message text");
                         }
                         recyclerView.scrollToPosition(result.size() - 1);
                     }
@@ -203,13 +202,13 @@ class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
                 return;
             }
 
-            //end progress bar visibility
-            if (activity != null) {
-                ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
-                bar.setVisibility(View.INVISIBLE);
-                firstRun = false;
-            }
+        }
 
+        //end progress bar visibility
+        if (activity != null) {
+            ProgressBar bar = (ProgressBar) activity.findViewById(R.id.progressBar);
+            bar.setVisibility(View.INVISIBLE);
+            firstRun = false;
         }
     }
 

@@ -18,13 +18,13 @@ import static pl.ordin.authorchatforwordpress.HttpGetRequest.firstRun;
 /**
  * {@link MainActivity} shows Author Chat from Wordpress website.
  */
-public class MainActivity extends AppCompatActivity { // TODO: 02.07.2017 add more comments
+public class MainActivity extends AppCompatActivity {
 
     static final Handler handler = new Handler();
     public static boolean onBackground;
     static Runnable r;
-    public RecyclerView recyclerView;
-    public SharedPreferences settings;
+    RecyclerView recyclerView;
+    SharedPreferences settings;
     EditText message;
 
     @Override
