@@ -26,14 +26,14 @@ import static pl.ordin.authorchatforwordpress.StartActivity.notificationsOnOff;
  * Class {@link HttpGetRequest} is responsible for url leech.
  */
 class HttpGetRequest extends AsyncTask<URL, Void, ArrayList<CustomArrayList>> {
-    private static final String VER_TO_COMPARE = "1.7.5"; //for plugin version checking
+    private static final String VER_TO_COMPARE = "1.8.0"; //for plugin version checking
     private static final int READ_TIMEOUT = 15000;
     private static final int CONNECTION_TIMEOUT = 15000;
     private static final String REQUEST_METHOD = "POST";
     static boolean firstRun = true;
     private static RecyclerViewAdapter adapter;
     private static ArrayList<CustomArrayList> newResult, oldResult;
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private String message = "2358";
     private String l = "";
     private String p = "";
