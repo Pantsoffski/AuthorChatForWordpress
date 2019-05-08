@@ -1,3 +1,5 @@
+# Author Chat For Wordpress
+
 Author Chat is an internal chat that let your authors (users with access to dashboard) to chat with each other. It is easy to use and supports private chat rooms.
 
 # Description
